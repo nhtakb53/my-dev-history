@@ -42,22 +42,22 @@ export default function CareerStatementPage() {
   const loading = loadingBasic || loadingCareers || loadingSkills || loadingEducations || loadingProjects;
 
   const CareerContent = () => (
-    <div className="a4-page bg-white shadow-lg">
+    <div className="a4-page bg-white shadow-sm border">
       {selectedSections.basic && (
-        <div className="mb-6 pb-4 border-b-2 border-gray-800 text-center">
-          <h1 className="text-lg font-bold text-gray-900 mb-4 tracking-tight">경력기술서</h1>
-          <h2 className="text-base font-bold text-gray-900 mb-0.5">{basicInfo.name || "이름 없음"}</h2>
-          {basicInfo.nameEn && <p className="text-xs text-gray-600 mb-2">{basicInfo.nameEn}</p>}
-          <div className="text-xs text-gray-700 space-y-0.5">
+        <div className="mb-6 pb-4 border-b text-center">
+          <h1 className="text-lg font-semibold text-foreground mb-4 tracking-tight">경력기술서</h1>
+          <h2 className="text-base font-semibold text-foreground mb-1">{basicInfo.name || "이름 없음"}</h2>
+          {basicInfo.nameEn && <p className="text-xs text-muted-foreground mb-2">{basicInfo.nameEn}</p>}
+          <div className="text-xs text-muted-foreground space-y-1">
             {basicInfo.email && (
               <div className="flex items-center justify-center gap-2">
-                <span className="font-medium">Email</span>
+                <span className="font-medium text-foreground">Email</span>
                 <span>{basicInfo.email}</span>
               </div>
             )}
             {basicInfo.phone && (
               <div className="flex items-center justify-center gap-2">
-                <span className="font-medium">Phone</span>
+                <span className="font-medium text-foreground">Phone</span>
                 <span>{basicInfo.phone}</span>
               </div>
             )}
@@ -67,33 +67,33 @@ export default function CareerStatementPage() {
 
       {selectedSections.career && careers.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-base font-bold text-gray-900 mb-2 pb-1.5 border-b border-gray-300">경력</h2>
+          <h2 className="text-base font-semibold text-foreground mb-3 pb-2 border-b">경력</h2>
           <div className="space-y-4">
             {careers.map((career) => (
-              <div key={career.id} className="pl-3 border-l-2 border-gray-800 bg-gray-50/30 pb-3 pt-2">
+              <div key={career.id} className="pl-4 border-l-4 border-primary/20 rounded-md bg-card p-3 shadow-sm border">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex-1">
-                    <h3 className="text-sm font-bold text-gray-900">{career.company}</h3>
-                    <p className="text-xs text-gray-700 font-medium mt-0.5">{career.position}</p>
+                    <h3 className="text-sm font-semibold text-foreground">{career.company}</h3>
+                    <p className="text-xs text-muted-foreground font-medium mt-1">{career.position}</p>
                   </div>
-                  <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-medium whitespace-nowrap ml-2">
+                  <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-md font-medium whitespace-nowrap ml-2">
                     {career.startDate} ~ {career.current ? "현재" : career.endDate}
                   </span>
                 </div>
                 {career.description && (
-                  <div className="mb-3 pb-2 border-b border-gray-200">
-                    <h4 className="font-semibold text-xs text-gray-900 mb-1.5">업무 내용</h4>
-                    <p className="text-xs text-gray-700 leading-relaxed">{career.description}</p>
+                  <div className="mb-3 pb-2 border-b">
+                    <h4 className="font-semibold text-xs text-foreground mb-2">업무 내용</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{career.description}</p>
                   </div>
                 )}
                 {career.achievements.length > 0 && (
                   <div>
-                    <h4 className="font-semibold text-xs text-gray-900 mb-2">주요 성과 및 기여</h4>
-                    <div className="bg-white/50 rounded p-2 border border-gray-100">
+                    <h4 className="font-semibold text-xs text-foreground mb-2">주요 성과 및 기여</h4>
+                    <div className="rounded-md bg-muted/50 p-2.5">
                       <ul className="space-y-1.5">
                         {career.achievements.map((achievement, index) => (
-                          <li key={index} className="text-xs text-gray-700 leading-relaxed flex items-start">
-                            <span className="mr-2 text-gray-400 font-bold leading-none mt-0.5">•</span>
+                          <li key={index} className="text-xs text-muted-foreground leading-relaxed flex items-start">
+                            <span className="mr-2 text-primary font-bold leading-none mt-0.5">•</span>
                             <span className="flex-1">{achievement}</span>
                           </li>
                         ))}
@@ -109,30 +109,30 @@ export default function CareerStatementPage() {
 
       {selectedSections.projects && projects.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-base font-bold text-gray-900 mb-2 pb-1.5 border-b border-gray-300">프로젝트</h2>
+          <h2 className="text-base font-semibold text-foreground mb-3 pb-2 border-b">프로젝트</h2>
           <div className="space-y-4">
             {projects.map((project) => (
-              <div key={project.id} className="pl-3 border-l-2 border-gray-800 bg-gray-50/30 pb-3 pt-2">
+              <div key={project.id} className="pl-4 border-l-4 border-primary/20 rounded-md bg-card p-3 shadow-sm border">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex-1">
-                    <h3 className="text-sm font-bold text-gray-900">{project.name}</h3>
-                    <p className="text-xs text-gray-700 font-medium mt-0.5">{project.role}</p>
+                    <h3 className="text-sm font-semibold text-foreground">{project.name}</h3>
+                    <p className="text-xs text-muted-foreground font-medium mt-1">{project.role}</p>
                   </div>
-                  <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-medium whitespace-nowrap ml-2">
+                  <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-md font-medium whitespace-nowrap ml-2">
                     {project.startDate} ~ {project.endDate}
                   </span>
                 </div>
-                <div className="mb-3 pb-2 border-b border-gray-200">
-                  <p className="text-xs text-gray-700 leading-relaxed">{project.description}</p>
+                <div className="mb-3 pb-2 border-b">
+                  <p className="text-xs text-muted-foreground leading-relaxed">{project.description}</p>
                 </div>
                 {project.techStack.length > 0 && (
-                  <div className="mb-3 pb-2 border-b border-gray-200">
-                    <h4 className="font-semibold text-xs text-gray-900 mb-1.5">사용 기술</h4>
-                    <div className="flex flex-wrap gap-1">
+                  <div className="mb-3 pb-2 border-b">
+                    <h4 className="font-semibold text-xs text-foreground mb-2">사용 기술</h4>
+                    <div className="flex flex-wrap gap-1.5">
                       {project.techStack.map((tech) => (
                         <span
                           key={tech}
-                          className="bg-gray-800 text-white px-1.5 py-0.5 rounded text-xs"
+                          className="bg-primary text-primary-foreground px-2 py-0.5 rounded-md text-xs font-medium"
                         >
                           {tech}
                         </span>
@@ -142,12 +142,12 @@ export default function CareerStatementPage() {
                 )}
                 {project.achievements.length > 0 && (
                   <div className="mb-3">
-                    <h4 className="font-semibold text-xs text-gray-900 mb-2">성과 및 기여</h4>
-                    <div className="bg-white/50 rounded p-2 border border-gray-100">
+                    <h4 className="font-semibold text-xs text-foreground mb-2">성과 및 기여</h4>
+                    <div className="rounded-md bg-muted/50 p-2.5">
                       <ul className="space-y-1.5">
                         {project.achievements.map((achievement, index) => (
-                          <li key={index} className="text-xs text-gray-700 leading-relaxed flex items-start">
-                            <span className="mr-2 text-gray-400 font-bold leading-none mt-0.5">•</span>
+                          <li key={index} className="text-xs text-muted-foreground leading-relaxed flex items-start">
+                            <span className="mr-2 text-primary font-bold leading-none mt-0.5">•</span>
                             <span className="flex-1">{achievement}</span>
                           </li>
                         ))}
@@ -156,12 +156,12 @@ export default function CareerStatementPage() {
                   </div>
                 )}
                 {project.url && (
-                  <div className="pt-2 border-t border-gray-200">
+                  <div className="pt-2 border-t">
                     <a
                       href={project.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-gray-600 hover:text-gray-900 underline"
+                      className="text-xs text-muted-foreground hover:text-foreground underline transition-colors"
                     >
                       {project.url}
                     </a>
