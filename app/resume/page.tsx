@@ -65,41 +65,65 @@ export default function ResumePage() {
     <div className="a4-page bg-white shadow-sm border">
       {selectedSections.basic && (
         <div className="mb-6 pb-4 border-b">
-          <div className="flex items-start gap-4">
+          <div className="flex flex-row-reverse items-start gap-4">
             {basicInfo.profileImage && (
-              <img
-                src={basicInfo.profileImage}
-                alt={basicInfo.name}
-                className="w-20 h-20 rounded-md border object-cover"
-              />
+                <img
+                    src={basicInfo.profileImage}
+                    alt={basicInfo.name}
+                    className="w-70 h-80 object-cover"
+                />
             )}
             <div className="flex-1">
-              <h1 className="text-2xl font-semibold text-foreground mb-0.5 tracking-tight">
+              <h1 className="text-3xl font-semibold text-foreground mb-0.5 tracking-tight">
                 {basicInfo.name || "이름 없음"}
               </h1>
               {basicInfo.nameEn && (
-                <p className="text-sm text-muted-foreground mb-2">{basicInfo.nameEn}</p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    {basicInfo.nameEn}
+                  </p>
               )}
               <div className="flex flex-col gap-1 text-xs text-muted-foreground">
                 {basicInfo.email && (
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-foreground">Email</span>
-                    <a href={`mailto:${basicInfo.email}`} className="hover:text-foreground transition-colors">
-                      {basicInfo.email}
-                    </a>
-                  </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-foreground w-14 shrink-0">Email</span>
+                      <a
+                          href={`mailto:${basicInfo.email}`}
+                          className="hover:text-foreground transition-colors"
+                      >
+                        {basicInfo.email}
+                      </a>
+                    </div>
                 )}
                 {basicInfo.phone && (
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-foreground">Phone</span>
-                    <span>{basicInfo.phone}</span>
-                  </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-foreground w-14 shrink-0">Phone</span>
+                      <span>{basicInfo.phone}</span>
+                    </div>
+                )}
+                {basicInfo.github && (
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-foreground w-14 shrink-0">GitHub</span>
+                      <a
+                          href={
+                            basicInfo.github.startsWith("http")
+                                ? basicInfo.github
+                                : `https://github.com/${basicInfo.github.replace("@", "")}`
+                          }
+                          target="_blank"
+                          rel="noreferrer"
+                          className="hover:text-foreground transition-colors truncate"
+                          title={basicInfo.github}
+                      >
+                        {basicInfo.github}
+                      </a>
+                    </div>
                 )}
               </div>
             </div>
           </div>
         </div>
       )}
+
 
       {selectedSections.introduce && basicInfo.introduce && (
         <div className="mb-6">
