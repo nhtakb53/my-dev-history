@@ -1,32 +1,38 @@
 "use client";
 
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useFileStorage } from "@/hooks/useFileStorage";
 import { Skill } from "@/types/resume";
 import { useState } from "react";
 
 export default function SkillsPage() {
-  const [skills, setSkills] = useLocalStorage<Skill[]>("skills", []);
+  const [skills, saveSkills, loading] = useFileStorage<Skill[]>("skills", []);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Omit<Skill, "id">>({
     category: "",
     name: "",
-    level: "중급",
+    level: 2,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    let updatedSkills;
     if (editingId) {
-      setSkills(skills.map((s) => (s.id === editingId ? { ...formData, id: editingId } : s)));
+      updatedSkills = skills.map((s) => (s.id === editingId ? { ...formData, id: editingId } : s));
     } else {
-      setSkills([...skills, { ...formData, id: Date.now().toString() }]);
+      updatedSkills = [...skills, { ...formData, id: Date.now().toString() }];
     }
-    resetForm();
-    alert("저장되었습니다.");
+    const success = await saveSkills(updatedSkills);
+    if (success) {
+      resetForm();
+      alert("저장되었습니다.");
+    } else {
+      alert("저장에 실패했습니다.");
+    }
   };
 
   const resetForm = () => {
-    setFormData({ category: "", name: "", level: "중급" });
+    setFormData({ category: "", name: "", level: 2 });
     setIsEditing(false);
     setEditingId(null);
   };
@@ -37,9 +43,10 @@ export default function SkillsPage() {
     setIsEditing(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm("삭제하시겠습니까?")) {
-      setSkills(skills.filter((s) => s.id !== id));
+      const updatedSkills = skills.filter((s) => s.id !== id);
+      await saveSkills(updatedSkills);
     }
   };
 
@@ -50,6 +57,10 @@ export default function SkillsPage() {
     acc[skill.category].push(skill);
     return acc;
   }, {} as Record<string, Skill[]>);
+
+  if (loading) {
+    return <div className="p-8">로딩 중...</div>;
+  }
 
   return (
     <div className="p-8 max-w-4xl">
@@ -96,15 +107,14 @@ export default function SkillsPage() {
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  level: e.target.value as Skill["level"],
+                  level: Number(e.target.value) as Skill["level"],
                 })
               }
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <option value="초급">초급</option>
-              <option value="중급">중급</option>
-              <option value="고급">고급</option>
-              <option value="전문가">전문가</option>
+              <option value={1}>1 - 기본적인 사용 경험과 협업에 필요한 지식 보유</option>
+              <option value={2}>2 - 매우 능숙하지는 않지만 업무 수행 가능</option>
+              <option value={3}>3 - 관련 지식과 경험이 풍부하며 능숙하게 업무 진행 가능</option>
             </select>
           </div>
           <div className="flex gap-2">
@@ -141,8 +151,8 @@ export default function SkillsPage() {
                     >
                       <div>
                         <span className="font-medium">{skill.name}</span>
-                        <span className="ml-3 text-sm text-muted-foreground">
-                          ({skill.level})
+                        <span className="ml-3 inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">
+                          {skill.level}
                         </span>
                       </div>
                       <div className="flex gap-2">

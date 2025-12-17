@@ -1,11 +1,11 @@
 "use client";
 
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useFileStorage } from "@/hooks/useFileStorage";
 import { BasicInfo } from "@/types/resume";
 import { useState, useEffect } from "react";
 
 export default function BasicInfoPage() {
-  const [data, setData] = useLocalStorage<BasicInfo>("basicInfo", {
+  const [data, saveData, loading] = useFileStorage<BasicInfo>("basic-info", {
     name: "",
     nameEn: "",
     email: "",
@@ -13,6 +13,8 @@ export default function BasicInfoPage() {
     github: "",
     blog: "",
     linkedin: "",
+    introduce: "",
+    profileImage: "",
   });
 
   const [formData, setFormData] = useState<BasicInfo>(data);
@@ -21,15 +23,23 @@ export default function BasicInfoPage() {
     setFormData(data);
   }, [data]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setData(formData);
-    alert("저장되었습니다.");
+    const success = await saveData(formData);
+    if (success) {
+      alert("저장되었습니다.");
+    } else {
+      alert("저장에 실패했습니다.");
+    }
   };
 
   const handleChange = (field: keyof BasicInfo, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
+  if (loading) {
+    return <div className="p-8">로딩 중...</div>;
+  }
 
   return (
     <div className="p-8 max-w-4xl">
@@ -98,6 +108,26 @@ export default function BasicInfoPage() {
             type="url"
             value={formData.linkedin || ""}
             onChange={(e) => handleChange("linkedin", e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-2">자기소개</label>
+          <textarea
+            value={formData.introduce || ""}
+            onChange={(e) => handleChange("introduce", e.target.value)}
+            rows={6}
+            placeholder="INTRODUCE 섹션에 표시될 자기소개를 입력하세요"
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-2">프로필 이미지 URL</label>
+          <input
+            type="url"
+            value={formData.profileImage || ""}
+            onChange={(e) => handleChange("profileImage", e.target.value)}
+            placeholder="https://example.com/profile.jpg"
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>

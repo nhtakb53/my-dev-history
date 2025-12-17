@@ -1,21 +1,21 @@
 "use client";
 
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useFileStorage } from "@/hooks/useFileStorage";
 import { BasicInfo, Career, Skill, Education, Project } from "@/types/resume";
 import { useState } from "react";
 import Link from "next/link";
 
 export default function CareerStatementPage() {
-  const [basicInfo] = useLocalStorage<BasicInfo>("basicInfo", {
+  const [basicInfo, , loadingBasic] = useFileStorage<BasicInfo>("basic-info", {
     name: "",
     nameEn: "",
     email: "",
     phone: "",
   });
-  const [careers] = useLocalStorage<Career[]>("careers", []);
-  const [skills] = useLocalStorage<Skill[]>("skills", []);
-  const [educations] = useLocalStorage<Education[]>("educations", []);
-  const [projects] = useLocalStorage<Project[]>("projects", []);
+  const [careers, , loadingCareers] = useFileStorage<Career[]>("careers", []);
+  const [skills, , loadingSkills] = useFileStorage<Skill[]>("skills", []);
+  const [educations, , loadingEducations] = useFileStorage<Education[]>("educations", []);
+  const [projects, , loadingProjects] = useFileStorage<Project[]>("projects", []);
 
   const [selectedSections, setSelectedSections] = useState({
     basic: true,
@@ -38,6 +38,8 @@ export default function CareerStatementPage() {
     acc[skill.category].push(skill);
     return acc;
   }, {} as Record<string, Skill[]>);
+
+  const loading = loadingBasic || loadingCareers || loadingSkills || loadingEducations || loadingProjects;
 
   const CareerContent = () => (
     <div className="a4-page bg-white shadow-lg">
@@ -226,6 +228,10 @@ export default function CareerStatementPage() {
         </div>
       </div>
     );
+  }
+
+  if (loading) {
+    return <div className="p-8">로딩 중...</div>;
   }
 
   return (

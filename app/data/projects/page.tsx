@@ -1,11 +1,11 @@
 "use client";
 
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useFileStorage } from "@/hooks/useFileStorage";
 import { Project } from "@/types/resume";
 import { useState } from "react";
 
 export default function ProjectsPage() {
-  const [projects, setProjects] = useLocalStorage<Project[]>("projects", []);
+  const [projects, saveProjects, loading] = useFileStorage<Project[]>("projects", []);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Omit<Project, "id">>({
@@ -21,15 +21,21 @@ export default function ProjectsPage() {
   const [techInput, setTechInput] = useState("");
   const [achievementInput, setAchievementInput] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    let updatedProjects;
     if (editingId) {
-      setProjects(projects.map((p) => (p.id === editingId ? { ...formData, id: editingId } : p)));
+      updatedProjects = projects.map((p) => (p.id === editingId ? { ...formData, id: editingId } : p));
     } else {
-      setProjects([...projects, { ...formData, id: Date.now().toString() }]);
+      updatedProjects = [...projects, { ...formData, id: Date.now().toString() }];
     }
-    resetForm();
-    alert("저장되었습니다.");
+    const success = await saveProjects(updatedProjects);
+    if (success) {
+      resetForm();
+      alert("저장되었습니다.");
+    } else {
+      alert("저장에 실패했습니다.");
+    }
   };
 
   const resetForm = () => {
@@ -55,9 +61,10 @@ export default function ProjectsPage() {
     setIsEditing(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm("삭제하시겠습니까?")) {
-      setProjects(projects.filter((p) => p.id !== id));
+      const updatedProjects = projects.filter((p) => p.id !== id);
+      await saveProjects(updatedProjects);
     }
   };
 
@@ -94,6 +101,10 @@ export default function ProjectsPage() {
       achievements: formData.achievements.filter((_, i) => i !== index),
     });
   };
+
+  if (loading) {
+    return <div className="p-8">로딩 중...</div>;
+  }
 
   return (
     <div className="p-8 max-w-4xl">

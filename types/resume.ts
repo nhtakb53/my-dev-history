@@ -6,6 +6,8 @@ export interface BasicInfo {
   github?: string;
   blog?: string;
   linkedin?: string;
+  introduce?: string;
+  profileImage?: string;
 }
 
 export interface Career {
@@ -23,7 +25,7 @@ export interface Skill {
   id: string;
   category: string;
   name: string;
-  level: "초급" | "중급" | "고급" | "전문가";
+  level: 1 | 2 | 3;
 }
 
 export interface Education {

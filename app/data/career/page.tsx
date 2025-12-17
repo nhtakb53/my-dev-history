@@ -1,11 +1,11 @@
 "use client";
 
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useFileStorage } from "@/hooks/useFileStorage";
 import { Career } from "@/types/resume";
 import { useState } from "react";
 
 export default function CareerPage() {
-  const [careers, setCareers] = useLocalStorage<Career[]>("careers", []);
+  const [careers, saveCareers, loading] = useFileStorage<Career[]>("careers", []);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Omit<Career, "id">>({
@@ -19,15 +19,21 @@ export default function CareerPage() {
   });
   const [achievementInput, setAchievementInput] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    let updatedCareers;
     if (editingId) {
-      setCareers(careers.map((c) => (c.id === editingId ? { ...formData, id: editingId } : c)));
+      updatedCareers = careers.map((c) => (c.id === editingId ? { ...formData, id: editingId } : c));
     } else {
-      setCareers([...careers, { ...formData, id: Date.now().toString() }]);
+      updatedCareers = [...careers, { ...formData, id: Date.now().toString() }];
     }
-    resetForm();
-    alert("저장되었습니다.");
+    const success = await saveCareers(updatedCareers);
+    if (success) {
+      resetForm();
+      alert("저장되었습니다.");
+    } else {
+      alert("저장에 실패했습니다.");
+    }
   };
 
   const resetForm = () => {
@@ -51,9 +57,10 @@ export default function CareerPage() {
     setIsEditing(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm("삭제하시겠습니까?")) {
-      setCareers(careers.filter((c) => c.id !== id));
+      const updatedCareers = careers.filter((c) => c.id !== id);
+      await saveCareers(updatedCareers);
     }
   };
 
@@ -73,6 +80,10 @@ export default function CareerPage() {
       achievements: formData.achievements.filter((_, i) => i !== index),
     });
   };
+
+  if (loading) {
+    return <div className="p-8">로딩 중...</div>;
+  }
 
   return (
     <div className="p-8 max-w-4xl">
