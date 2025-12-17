@@ -62,33 +62,33 @@ export default function ResumePage() {
   const loading = loadingBasic || loadingCareers || loadingSkills || loadingEducations || loadingProjects;
 
   const ResumeContent = () => (
-    <div className="a4-page bg-white shadow-sm border">
+    <div className="a4-page bg-white">
       {selectedSections.basic && (
-        <div className="mb-6 pb-4 border-b">
+        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
           <div className="flex flex-row-reverse items-start gap-4">
             {basicInfo.profileImage && (
                 <img
                     src={basicInfo.profileImage}
                     alt={basicInfo.name}
-                    className="w-70 h-80 object-cover"
+                    className="w-70 h-80 object-cover rounded-lg"
                 />
             )}
             <div className="flex-1">
-              <h1 className="text-3xl font-semibold text-foreground mb-0.5 tracking-tight">
+              <h1 className="text-3xl font-semibold text-gray-900 mb-0.5 tracking-tight">
                 {basicInfo.name || "이름 없음"}
               </h1>
               {(basicInfo.nameEn || basicInfo.nickname) && (
-                  <p className="text-sm text-muted-foreground mb-2">
+                  <p className="text-sm text-gray-600 mb-2">
                     {[basicInfo.nameEn, basicInfo.nickname].filter(Boolean).join(" / ")}
                   </p>
               )}
-              <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+              <div className="flex flex-col gap-1 text-xs text-gray-600">
                 {basicInfo.email && (
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground w-14 shrink-0">Email</span>
+                      <span className="font-medium text-gray-900 w-14 shrink-0">Email</span>
                       <a
                           href={`mailto:${basicInfo.email}`}
-                          className="hover:text-foreground transition-colors"
+                          className="hover:text-gray-900 transition-colors"
                       >
                         {basicInfo.email}
                       </a>
@@ -96,13 +96,13 @@ export default function ResumePage() {
                 )}
                 {basicInfo.phone && (
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground w-14 shrink-0">Phone</span>
+                      <span className="font-medium text-gray-900 w-14 shrink-0">Phone</span>
                       <span>{basicInfo.phone}</span>
                     </div>
                 )}
                 {basicInfo.github && (
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground w-14 shrink-0">GitHub</span>
+                      <span className="font-medium text-gray-900 w-14 shrink-0">GitHub</span>
                       <a
                           href={
                             basicInfo.github.startsWith("http")
@@ -111,7 +111,7 @@ export default function ResumePage() {
                           }
                           target="_blank"
                           rel="noreferrer"
-                          className="hover:text-foreground transition-colors truncate"
+                          className="hover:text-gray-900 transition-colors truncate"
                           title={basicInfo.github}
                       >
                         {basicInfo.github}
@@ -124,21 +124,20 @@ export default function ResumePage() {
         </div>
       )}
 
-
       {selectedSections.introduce && basicInfo.introduce && (
-        <div className="mb-6">
-          <h2 className="text-base font-semibold text-foreground mb-3 pb-2 border-b">소개</h2>
-          <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap">{basicInfo.introduce}</p>
+        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
+          <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">소개</h2>
+          <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">{basicInfo.introduce}</p>
         </div>
       )}
 
       {selectedSections.career && careers.length > 0 && (
-        <div className="mb-6">
+        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
           <div className="flex justify-between items-end mb-3 pb-2 border-b">
-            <h2 className="text-base font-semibold text-foreground">경력</h2>
-            <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-md font-medium">총 {years}년 {months}개월</span>
+            <h2 className="text-base font-semibold text-gray-900">경력</h2>
+            <span className="text-xs bg-gray-800 text-white px-2 py-0.5 rounded-md font-medium">총 {years}년 {months}개월</span>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {careers.map((career) => {
               const start = new Date(career.startDate);
               const end = career.current ? new Date() : new Date(career.endDate);
@@ -147,32 +146,32 @@ export default function ResumePage() {
               const careerRemainingMonths = careerMonths % 12;
 
               return (
-                <div key={career.id} className="pl-4 border-l-4 border-primary/20 rounded-md bg-card p-3 shadow-sm border">
+                <div key={career.id} className="rounded-md bg-gray-50 p-3 shadow-sm border border-gray-200">
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
-                      <h3 className="text-sm font-semibold text-foreground">{career.company}</h3>
-                      <p className="text-xs text-muted-foreground font-medium mt-1">{career.position}</p>
+                      <h3 className="text-sm font-semibold text-gray-900">{career.company}</h3>
+                      <p className="text-xs text-gray-700 font-medium mt-1">{career.position}</p>
                     </div>
                     <div className="ml-4 flex flex-col items-end gap-1">
-                      <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-md font-medium whitespace-nowrap">
+                      <span className="text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-md font-medium whitespace-nowrap">
                         {career.startDate} ~ {career.current ? "현재" : career.endDate}
                       </span>
-                      <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-md font-medium">
+                      <span className="text-xs bg-gray-800 text-white px-2 py-0.5 rounded-md font-medium">
                         {careerYears}년 {careerRemainingMonths}개월
                       </span>
                     </div>
                   </div>
                   {career.description && (
-                    <div className="mb-3 pb-2 border-b">
-                      <p className="text-xs text-muted-foreground leading-relaxed">{career.description}</p>
+                    <div className="mb-3 pb-2 border-b border-gray-200">
+                      <p className="text-xs text-gray-700 leading-relaxed">{career.description}</p>
                     </div>
                   )}
                   {career.achievements.length > 0 && (
-                    <div className="rounded-md bg-muted/50 p-2.5">
-                      <ul className="space-y-1.5 text-xs text-muted-foreground">
+                    <div className="rounded-md bg-white p-2.5 border border-gray-100">
+                      <ul className="space-y-1.5 text-xs text-gray-700">
                         {career.achievements.map((achievement, index) => (
                           <li key={index} className="flex items-start">
-                            <span className="mr-2 text-primary font-bold leading-none mt-0.5">•</span>
+                            <span className="mr-2 text-gray-900 font-bold leading-none mt-0.5">•</span>
                             <span className="flex-1">{achievement}</span>
                           </li>
                         ))}
@@ -187,27 +186,27 @@ export default function ResumePage() {
       )}
 
       {selectedSections.skills && Object.keys(groupedSkills).length > 0 && (
-        <div className="mb-6">
-          <h2 className="text-base font-semibold text-foreground mb-3 pb-2 border-b">보유 기술</h2>
-          <div className="bg-muted/50 p-2.5 rounded-md mb-3 border">
-            <div className="space-y-1 text-xs text-muted-foreground">
-              <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground font-bold mr-2 text-xs">3</span>{getLevelText(3)}</p>
-              <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground font-bold mr-2 text-xs">2</span>{getLevelText(2)}</p>
-              <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground font-bold mr-2 text-xs">1</span>{getLevelText(1)}</p>
+        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
+          <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">보유 기술</h2>
+          <div className="bg-gray-50 p-2.5 rounded-md mb-3 border border-gray-200">
+            <div className="space-y-1 text-xs text-gray-700">
+              <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-2 text-xs">3</span>{getLevelText(3)}</p>
+              <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-2 text-xs">2</span>{getLevelText(2)}</p>
+              <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-2 text-xs">1</span>{getLevelText(1)}</p>
             </div>
           </div>
           <div className="space-y-2.5">
             {Object.entries(groupedSkills).map(([category, categorySkills]) => (
               <div key={category} className="flex gap-3">
-                <div className="w-20 font-semibold text-xs text-foreground">{category}</div>
+                <div className="w-20 font-semibold text-xs text-gray-900">{category}</div>
                 <div className="flex-1">
                   <div className="flex flex-wrap gap-2">
                     {categorySkills.map((skill) => (
-                      <div key={skill.id} className="flex items-center gap-1 bg-muted px-2 py-0.5 rounded-md border">
-                        <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground text-xs font-bold">
+                      <div key={skill.id} className="flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded-md border border-gray-200">
+                        <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white text-xs font-bold">
                           {skill.level}
                         </span>
-                        <span className="text-xs text-foreground">{skill.name}</span>
+                        <span className="text-xs text-gray-900">{skill.name}</span>
                       </div>
                     ))}
                   </div>
@@ -219,17 +218,17 @@ export default function ResumePage() {
       )}
 
       {selectedSections.education && educations.length > 0 && (
-        <div className="mb-6">
-          <h2 className="text-base font-semibold text-foreground mb-3 pb-2 border-b">학력</h2>
+        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
+          <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">학력</h2>
           <div className="space-y-3">
             {educations.map((education) => (
-              <div key={education.id} className="flex justify-between items-start bg-card p-2.5 rounded-md border shadow-sm">
+              <div key={education.id} className="flex justify-between items-start bg-gray-50 p-2.5 rounded-md border border-gray-200 shadow-sm">
                 <div>
-                  <h3 className="font-semibold text-xs text-foreground">{education.school}</h3>
-                  <p className="text-xs text-muted-foreground mt-1">{education.major} / {education.degree}</p>
-                  {education.gpa && <p className="text-xs text-muted-foreground mt-0.5">학점: {education.gpa}</p>}
+                  <h3 className="font-semibold text-xs text-gray-900">{education.school}</h3>
+                  <p className="text-xs text-gray-700 mt-1">{education.major} / {education.degree}</p>
+                  {education.gpa && <p className="text-xs text-gray-600 mt-0.5">학점: {education.gpa}</p>}
                 </div>
-                <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-md font-medium whitespace-nowrap ml-2">
+                <span className="text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-md font-medium whitespace-nowrap ml-2">
                   {education.startDate} ~ {education.endDate}
                 </span>
               </div>
@@ -239,29 +238,29 @@ export default function ResumePage() {
       )}
 
       {selectedSections.projects && projects.length > 0 && (
-        <div className="mb-6">
-          <h2 className="text-base font-semibold text-foreground mb-3 pb-2 border-b">프로젝트</h2>
-          <div className="space-y-4">
+        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
+          <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">프로젝트</h2>
+          <div className="space-y-3">
             {projects.map((project) => (
-              <div key={project.id} className="pl-4 border-l-4 border-primary/20 rounded-md bg-card p-3 shadow-sm border">
+              <div key={project.id} className="rounded-md bg-gray-50 p-3 shadow-sm border border-gray-200">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-foreground">{project.name}</h3>
-                    <p className="text-xs text-muted-foreground font-medium mt-1">{project.role}</p>
+                    <h3 className="text-sm font-semibold text-gray-900">{project.name}</h3>
+                    <p className="text-xs text-gray-700 font-medium mt-1">{project.role}</p>
                   </div>
-                  <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-md font-medium whitespace-nowrap ml-2">
+                  <span className="text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-md font-medium whitespace-nowrap ml-2">
                     {project.startDate} ~ {project.endDate}
                   </span>
                 </div>
-                <div className="mb-3 pb-2 border-b">
-                  <p className="text-xs text-muted-foreground leading-relaxed">{project.description}</p>
+                <div className="mb-3 pb-2 border-b border-gray-200">
+                  <p className="text-xs text-gray-700 leading-relaxed">{project.description}</p>
                 </div>
                 {project.techStack.length > 0 && (
-                  <div className="mb-3 pb-2 border-b">
-                    <span className="font-semibold text-xs text-foreground block mb-2">기술스택</span>
+                  <div className="mb-3 pb-2 border-b border-gray-200">
+                    <span className="font-semibold text-xs text-gray-900 block mb-2">기술스택</span>
                     <div className="flex flex-wrap gap-1.5">
                       {project.techStack.map((tech, idx) => (
-                        <span key={idx} className="bg-primary text-primary-foreground px-2 py-0.5 rounded-md text-xs font-medium">
+                        <span key={idx} className="bg-gray-800 text-white px-2 py-0.5 rounded-md text-xs font-medium">
                           {tech}
                         </span>
                       ))}
@@ -269,11 +268,11 @@ export default function ResumePage() {
                   </div>
                 )}
                 {project.achievements.length > 0 && (
-                  <div className="rounded-md bg-muted/50 p-2.5">
-                    <ul className="space-y-1.5 text-xs text-muted-foreground">
+                  <div className="rounded-md bg-white p-2.5 border border-gray-100">
+                    <ul className="space-y-1.5 text-xs text-gray-700">
                       {project.achievements.map((achievement, index) => (
                         <li key={index} className="flex items-start">
-                          <span className="mr-2 text-primary font-bold leading-none mt-0.5">•</span>
+                          <span className="mr-2 text-gray-900 font-bold leading-none mt-0.5">•</span>
                           <span className="flex-1">{achievement}</span>
                         </li>
                       ))}
