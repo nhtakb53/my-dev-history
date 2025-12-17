@@ -75,14 +75,14 @@ export default function CareerStatementPage() {
           <div className="space-y-3">
             {careers.map((career) => (
               <div key={career.id} className="rounded-md bg-gray-50 p-3 shadow-sm border border-gray-200">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex-1">
+                <div className="mb-2">
+                  <div className="flex items-center gap-2 mb-1">
                     <h3 className="text-sm font-semibold text-gray-900">{career.company}</h3>
-                    <p className="text-xs text-gray-700 font-medium mt-1">{career.position}</p>
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-semibold whitespace-nowrap">
+                      {career.startDate} ~ {career.current ? "현재" : career.endDate}
+                    </span>
                   </div>
-                  <span className="text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-md font-medium whitespace-nowrap ml-2">
-                    {career.startDate} ~ {career.current ? "현재" : career.endDate}
-                  </span>
+                  <p className="text-xs text-gray-700 font-medium">{career.position}</p>
                 </div>
                 {career.description && (
                   <div className="mb-3 pb-2 border-b border-gray-200">
@@ -117,14 +117,14 @@ export default function CareerStatementPage() {
           <div className="space-y-3">
             {projects.map((project) => (
               <div key={project.id} className="rounded-md bg-gray-50 p-3 shadow-sm border border-gray-200">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex-1">
+                <div className="mb-2">
+                  <div className="flex items-center gap-2 mb-1">
                     <h3 className="text-sm font-semibold text-gray-900">{project.name}</h3>
-                    <p className="text-xs text-gray-700 font-medium mt-1">{project.role}</p>
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-semibold whitespace-nowrap">
+                      {project.startDate} ~ {project.endDate}
+                    </span>
                   </div>
-                  <span className="text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-md font-medium whitespace-nowrap ml-2">
-                    {project.startDate} ~ {project.endDate}
-                  </span>
+                  <p className="text-xs text-gray-700 font-medium">{project.role}</p>
                 </div>
                 <div className="mb-3 pb-2 border-b border-gray-200">
                   <p className="text-xs text-gray-700 leading-relaxed">{project.description}</p>

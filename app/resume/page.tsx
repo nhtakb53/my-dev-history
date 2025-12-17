@@ -147,19 +147,17 @@ export default function ResumePage() {
 
               return (
                 <div key={career.id} className="rounded-md bg-gray-50 p-3 shadow-sm border border-gray-200">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex-1">
+                  <div className="mb-2">
+                    <div className="flex items-center gap-2 mb-1">
                       <h3 className="text-sm font-semibold text-gray-900">{career.company}</h3>
-                      <p className="text-xs text-gray-700 font-medium mt-1">{career.position}</p>
-                    </div>
-                    <div className="ml-4 flex flex-col items-end gap-1">
-                      <span className="text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-md font-medium whitespace-nowrap">
+                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-semibold whitespace-nowrap">
                         {career.startDate} ~ {career.current ? "현재" : career.endDate}
                       </span>
-                      <span className="text-xs bg-gray-800 text-white px-2 py-0.5 rounded-md font-medium">
+                      <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-md font-semibold">
                         {careerYears}년 {careerRemainingMonths}개월
                       </span>
                     </div>
+                    <p className="text-xs text-gray-700 font-medium">{career.position}</p>
                   </div>
                   {career.description && (
                     <div className="mb-3 pb-2 border-b border-gray-200">
@@ -222,15 +220,15 @@ export default function ResumePage() {
           <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">학력</h2>
           <div className="space-y-3">
             {educations.map((education) => (
-              <div key={education.id} className="flex justify-between items-start bg-gray-50 p-2.5 rounded-md border border-gray-200 shadow-sm">
-                <div>
+              <div key={education.id} className="bg-gray-50 p-2.5 rounded-md border border-gray-200 shadow-sm">
+                <div className="flex items-center gap-2 mb-1">
                   <h3 className="font-semibold text-xs text-gray-900">{education.school}</h3>
-                  <p className="text-xs text-gray-700 mt-1">{education.major} / {education.degree}</p>
-                  {education.gpa && <p className="text-xs text-gray-600 mt-0.5">학점: {education.gpa}</p>}
+                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-semibold whitespace-nowrap">
+                    {education.startDate} ~ {education.endDate}
+                  </span>
                 </div>
-                <span className="text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-md font-medium whitespace-nowrap ml-2">
-                  {education.startDate} ~ {education.endDate}
-                </span>
+                <p className="text-xs text-gray-700">{education.major} / {education.degree}</p>
+                {education.gpa && <p className="text-xs text-gray-600 mt-0.5">학점: {education.gpa}</p>}
               </div>
             ))}
           </div>
@@ -243,14 +241,14 @@ export default function ResumePage() {
           <div className="space-y-3">
             {projects.map((project) => (
               <div key={project.id} className="rounded-md bg-gray-50 p-3 shadow-sm border border-gray-200">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex-1">
+                <div className="mb-2">
+                  <div className="flex items-center gap-2 mb-1">
                     <h3 className="text-sm font-semibold text-gray-900">{project.name}</h3>
-                    <p className="text-xs text-gray-700 font-medium mt-1">{project.role}</p>
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-semibold whitespace-nowrap">
+                      {project.startDate} ~ {project.endDate}
+                    </span>
                   </div>
-                  <span className="text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-md font-medium whitespace-nowrap ml-2">
-                    {project.startDate} ~ {project.endDate}
-                  </span>
+                  <p className="text-xs text-gray-700 font-medium">{project.role}</p>
                 </div>
                 <div className="mb-3 pb-2 border-b border-gray-200">
                   <p className="text-xs text-gray-700 leading-relaxed">{project.description}</p>
