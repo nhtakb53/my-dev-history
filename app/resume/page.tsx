@@ -40,7 +40,7 @@ export default function ResumePage() {
   }, {} as Record<string, Skill[]>);
 
   const ResumeContent = () => (
-    <div className="max-w-4xl bg-white p-12 shadow-lg">
+    <div className="a4-page bg-white shadow-lg">
       {selectedSections.basic && (
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">{basicInfo.name || "이름 없음"}</h1>
@@ -193,16 +193,22 @@ export default function ResumePage() {
 
   if (isPreview) {
     return (
-      <div className="min-h-screen bg-gray-100">
-        <div className="fixed top-4 right-4 z-10">
+      <div className="min-h-screen bg-gray-100 print:bg-white">
+        <div className="fixed top-4 right-4 z-10 print:hidden">
           <button
             onClick={() => setIsPreview(false)}
-            className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 shadow-lg"
+            className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 shadow-lg mr-2"
           >
             편집 모드로 돌아가기
           </button>
+          <button
+            onClick={() => window.print()}
+            className="px-6 py-3 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90 shadow-lg"
+          >
+            PDF 저장
+          </button>
         </div>
-        <div className="p-8 flex justify-center">
+        <div className="py-8 flex justify-center print:p-0">
           <ResumeContent />
         </div>
       </div>

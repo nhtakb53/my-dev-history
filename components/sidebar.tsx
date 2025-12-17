@@ -42,7 +42,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 border-r bg-background">
+    <aside className="fixed left-0 top-0 h-screen w-64 border-r bg-background print:hidden">
       <div className="flex h-full flex-col">
         <div className="border-b p-6">
           <h1 className="text-xl font-bold">개발자 이력</h1>
