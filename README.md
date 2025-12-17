@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# My Dev History
 
-## Getting Started
+개발자 이력서 및 경력기술서를 관리하고 출력할 수 있는 웹 애플리케이션입니다.
 
-First, run the development server:
+## 주요 기능
+
+### 📝 데이터 관리
+- **기본사항**: 이름, 연락처, GitHub, 블로그, LinkedIn 등 기본 정보 관리
+- **경력**: 회사명, 직책, 재직기간, 업무 내용 및 주요 성과 등록
+- **보유기술**: 카테고리별 기술 스택 및 숙련도 관리
+- **학력**: 학교, 전공, 학위, 학점 정보 등록
+- **프로젝트**: 프로젝트명, 설명, 기간, 역할, 기술 스택, 주요 성과 등록
+
+### 📄 문서 생성
+- **이력서**: 개인 정보, 자기소개, 경력, 보유기술, 학력, 프로젝트를 포함한 이력서
+- **경력기술서**: 경력 중심의 상세 기술서
+- **섹션 선택**: 문서에 포함할 섹션을 토글 버튼으로 선택 가능
+- **미리보기**: 작성된 문서를 A4 용지 형식으로 미리보기
+- **PDF 저장**: 미리보기 화면에서 PDF로 저장 가능
+
+### 💾 데이터 저장
+- 로컬 JSON 파일로 데이터 저장
+- 브라우저를 닫아도 데이터 유지
+- 간단한 백업 및 복원 가능
+
+## 기술 스택
+
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Storage**: File System API (JSON)
+
+## 시작하기
+
+### 설치
+
+```bash
+npm install
+```
+
+### 개발 서버 실행
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 확인하세요.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 빌드
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+```
 
-## Learn More
+### 프로덕션 실행
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 프로젝트 구조
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+my-dev-history/
+├── app/
+│   ├── data/              # 데이터 입력 페이지
+│   │   ├── basic/         # 기본사항
+│   │   ├── career/        # 경력
+│   │   ├── skills/        # 보유기술
+│   │   ├── education/     # 학력
+│   │   └── projects/      # 프로젝트
+│   ├── resume/            # 이력서 페이지
+│   ├── career/            # 경력기술서 페이지
+│   └── api/               # API 라우트
+│       └── data/          # 데이터 저장/불러오기 API
+├── data/                  # JSON 데이터 저장 폴더
+├── hooks/                 # 커스텀 훅
+│   └── useFileStorage.ts  # 파일 저장 훅
+├── types/                 # TypeScript 타입 정의
+│   └── resume.ts
+└── components/            # 재사용 가능한 컴포넌트
 
-## Deploy on Vercel
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 사용 방법
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **데이터 입력**
+   - 상단 네비게이션에서 "데이터 입력" 메뉴 선택
+   - 기본사항, 경력, 보유기술, 학력, 프로젝트 정보 입력
+   - 각 페이지는 가운데 정렬된 폼으로 구성
+   - 입력 필드는 한 줄에 하나씩 배치
+
+2. **이력서/경력기술서 작성**
+   - "이력서" 또는 "경력기술서" 메뉴 선택
+   - 포함할 섹션을 토글 버튼으로 선택
+   - "미리보기" 버튼 클릭하여 A4 형식으로 확인
+   - 미리보기 화면에서 "PDF 저장" 버튼으로 다운로드
+
+3. **PDF 내용 가져오기**
+   - PDF 파일에서 프로젝트 정보 추출
+   - JSON 형식으로 자동 변환 및 저장
+
+## 데이터 형식
+
+모든 데이터는 `/data` 폴더에 JSON 형식으로 저장됩니다:
+
+- `basic-info.json`: 기본사항
+- `careers.json`: 경력 목록
+- `skills.json`: 보유기술 목록
+- `educations.json`: 학력 목록
+- `projects.json`: 프로젝트 목록
+
+## 라이선스
+
+MIT
+
+## 참고
+
+이 프로젝트는 [Next.js](https://nextjs.org)로 구축되었습니다.
