@@ -25,7 +25,7 @@ const highlightKeywords = (text: string) => {
       return (
         <span
           key={index}
-          className="font-semibold text-blue-600 bg-blue-50 px-1 rounded"
+          className="font-bold"
         >
           {keyword}
         </span>
@@ -180,7 +180,9 @@ export default function ResumePage() {
         <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
           <div className="flex justify-between items-end mb-3 pb-2 border-b">
             <h2 className="text-base font-semibold text-gray-900">경력</h2>
-            <span className="text-xs bg-gray-800 text-white px-2 py-0.5 rounded-md font-medium">총 {years}년 {months}개월</span>
+            <span className="text-xs bg-gray-800 text-white px-2 py-0.5 rounded-md font-medium">
+              총 {years > 0 ? `${years}년 ${months}개월` : `${months}개월`}
+            </span>
           </div>
           <div className="space-y-3">
             {sortedCareers.map((career) => {
@@ -199,7 +201,7 @@ export default function ResumePage() {
                         {career.startDate} ~ {career.current ? "현재" : career.endDate}
                       </span>
                       <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-md font-semibold">
-                        {careerYears}년 {careerRemainingMonths}개월
+                        {careerYears > 0 ? `${careerYears}년 ${careerRemainingMonths}개월` : `${careerRemainingMonths}개월`}
                       </span>
                     </div>
                     <p className="text-xs text-gray-700 font-medium">{career.position}</p>
