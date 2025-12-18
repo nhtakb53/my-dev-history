@@ -208,7 +208,11 @@ export default function ProjectsPage() {
   };
 
   const handleEdit = (project: Project) => {
-    setFormData(project);
+    setFormData({
+      ...project,
+      techStack: project.techStack || [],
+      achievements: project.achievements || [],
+    });
     setEditingId(project.id);
     setIsEditing(true);
   };
@@ -226,36 +230,40 @@ export default function ProjectsPage() {
   };
 
   const addTech = () => {
-    if (techInput.trim() && !formData.techStack.includes(techInput.trim())) {
+    const techStack = formData.techStack || [];
+    if (techInput.trim() && !techStack.includes(techInput.trim())) {
       setFormData({
         ...formData,
-        techStack: [...formData.techStack, techInput.trim()],
+        techStack: [...techStack, techInput.trim()],
       });
       setTechInput("");
     }
   };
 
   const removeTech = (tech: string) => {
+    const techStack = formData.techStack || [];
     setFormData({
       ...formData,
-      techStack: formData.techStack.filter((t) => t !== tech),
+      techStack: techStack.filter((t) => t !== tech),
     });
   };
 
   const addAchievement = () => {
+    const achievements = formData.achievements || [];
     if (achievementInput.trim()) {
       setFormData({
         ...formData,
-        achievements: [...formData.achievements, achievementInput.trim()],
+        achievements: [...achievements, achievementInput.trim()],
       });
       setAchievementInput("");
     }
   };
 
   const removeAchievement = (index: number) => {
+    const achievements = formData.achievements || [];
     setFormData({
       ...formData,
-      achievements: formData.achievements.filter((_, i) => i !== index),
+      achievements: achievements.filter((_, i) => i !== index),
     });
   };
 
@@ -351,7 +359,7 @@ export default function ProjectsPage() {
               </button>
             </div>
             <div className="flex flex-wrap gap-2">
-              {formData.techStack.map((tech) => (
+              {(formData.techStack || []).map((tech) => (
                 <span
                   key={tech}
                   className="inline-flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full text-sm"
@@ -388,7 +396,7 @@ export default function ProjectsPage() {
               </button>
             </div>
             <ul className="space-y-2">
-              {formData.achievements.map((achievement, index) => (
+              {(formData.achievements || []).map((achievement, index) => (
                 <li key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
                   <span>{achievement}</span>
                   <button
