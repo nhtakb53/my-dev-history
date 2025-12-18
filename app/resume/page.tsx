@@ -1,10 +1,64 @@
 "use client";
 
-import { useFileStorage } from "@/hooks/useFileStorage";
-import { BasicInfo, Career, Skill, Education, Project } from "@/types/resume";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Mail, Phone, Github } from "lucide-react";
+import { getBasicInfo, getCareers, getSkills, getEducations, getProjects } from "@/lib/api";
+import { useSupabaseData } from "@/hooks/useSupabaseData";
+
+interface BasicInfo {
+  name: string;
+  name_en?: string;
+  nickname?: string;
+  email: string;
+  phone: string;
+  github?: string;
+  blog?: string;
+  linkedin?: string;
+  introduce?: string;
+  profile_image?: string;
+  tags?: string[];
+}
+
+interface Career {
+  id: string;
+  company: string;
+  position: string;
+  start_date: string;
+  end_date?: string;
+  current: boolean;
+  description?: string;
+  achievements: string[];
+}
+
+interface Skill {
+  id: string;
+  category: string;
+  name: string;
+  level: number;
+}
+
+interface Education {
+  id: string;
+  school: string;
+  major?: string;
+  degree?: string;
+  start_date: string;
+  end_date: string;
+  gpa?: string;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  description?: string;
+  start_date: string;
+  end_date: string;
+  role?: string;
+  tech_stack: string[];
+  achievements: string[];
+  url?: string;
+}
 
 const getLevelText = (level: number) => {
   const levels = {
@@ -16,36 +70,22 @@ const getLevelText = (level: number) => {
 };
 
 const highlightKeywords = (text: string) => {
-  // 키워드 패턴: ** 로 감싸진 텍스트를 찾음
   const parts = text.split(/(\*\*.*?\*\*)/g);
-
   return parts.map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       const keyword = part.slice(2, -2);
-      return (
-        <span
-          key={index}
-          className="font-bold"
-        >
-          {keyword}
-        </span>
-      );
+      return <span key={index} className="font-bold">{keyword}</span>;
     }
     return part;
   });
 };
 
 export default function ResumePage() {
-  const [basicInfo, , loadingBasic] = useFileStorage<BasicInfo>("basic-info", {
-    name: "",
-    nameEn: "",
-    email: "",
-    phone: "",
-  });
-  const [careers, , loadingCareers] = useFileStorage<Career[]>("careers", []);
-  const [skills, , loadingSkills] = useFileStorage<Skill[]>("skills", []);
-  const [educations, , loadingEducations] = useFileStorage<Education[]>("educations", []);
-  const [projects, , loadingProjects] = useFileStorage<Project[]>("projects", []);
+  const { data: basicInfo, loading: loadingBasic } = useSupabaseData<BasicInfo>(getBasicInfo, []);
+  const { data: careers, loading: loadingCareers } = useSupabaseData<Career[]>(getCareers, []);
+  const { data: skills, loading: loadingSkills } = useSupabaseData<Skill[]>(getSkills, []);
+  const { data: educations, loading: loadingEducations } = useSupabaseData<Education[]>(getEducations, []);
+  const { data: projects, loading: loadingProjects } = useSupabaseData<Project[]>(getProjects, []);
 
   const [selectedSections, setSelectedSections] = useState({
     basic: true,
@@ -62,19 +102,19 @@ export default function ResumePage() {
     setSelectedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const sortedCareers = [...careers].sort((a, b) => {
-    const dateA = new Date(a.startDate).getTime();
-    const dateB = new Date(b.startDate).getTime();
+  const sortedCareers = careers ? [...careers].sort((a, b) => {
+    const dateA = new Date(a.start_date).getTime();
+    const dateB = new Date(b.start_date).getTime();
     return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
-  });
+  }) : [];
 
-  const sortedProjects = [...projects].sort((a, b) => {
-    const dateA = new Date(a.startDate).getTime();
-    const dateB = new Date(b.startDate).getTime();
+  const sortedProjects = projects ? [...projects].sort((a, b) => {
+    const dateA = new Date(a.start_date).getTime();
+    const dateB = new Date(b.start_date).getTime();
     return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
-  });
+  }) : [];
 
-  const groupedSkills = skills.reduce((acc, skill) => {
+  const groupedSkills = (skills || []).reduce((acc, skill) => {
     if (!acc[skill.category]) {
       acc[skill.category] = [];
     }
@@ -82,9 +122,9 @@ export default function ResumePage() {
     return acc;
   }, {} as Record<string, Skill[]>);
 
-  const totalCareerMonths = careers.reduce((total, career) => {
-    const start = new Date(career.startDate);
-    const end = career.current ? new Date() : new Date(career.endDate);
+  const totalCareerMonths = (careers || []).reduce((total, career) => {
+    const start = new Date(career.start_date);
+    const end = career.current ? new Date() : new Date(career.end_date || career.start_date);
     const months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
     return total + months;
   }, 0);
@@ -96,12 +136,12 @@ export default function ResumePage() {
 
   const ResumeContent = () => (
     <div className="a4-page bg-white">
-      {selectedSections.basic && (
+      {selectedSections.basic && basicInfo && (
         <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
           <div className="flex flex-row-reverse items-start gap-4">
-            {basicInfo.profileImage && (
+            {basicInfo.profile_image && (
                 <img
-                    src={basicInfo.profileImage}
+                    src={basicInfo.profile_image}
                     alt={basicInfo.name}
                     className="w-65 h-75 object-cover rounded-lg"
                 />
@@ -110,19 +150,16 @@ export default function ResumePage() {
               <h1 className="text-3xl font-semibold text-gray-900 mb-0.5 tracking-tight mb-2">
                 {basicInfo.name || "이름 없음"}
               </h1>
-              {(basicInfo.nameEn || basicInfo.nickname) && (
+              {(basicInfo.name_en || basicInfo.nickname) && (
                   <p className="text-md text-gray-600 mb-3">
-                    {[basicInfo.nameEn, basicInfo.nickname].filter(Boolean).join(" / ")}
+                    {[basicInfo.name_en, basicInfo.nickname].filter(Boolean).join(" / ")}
                   </p>
               )}
               <div className="flex flex-col gap-1 text-xs text-gray-600">
                 {basicInfo.email && (
                     <div className="flex items-center gap-2">
                       <Mail size={18} className="shrink-0" />
-                      <a
-                          href={`mailto:${basicInfo.email}`}
-                          className="hover:text-gray-900 transition-colors"
-                      >
+                      <a href={`mailto:${basicInfo.email}`} className="hover:text-gray-900 transition-colors">
                         {basicInfo.email}
                       </a>
                     </div>
@@ -186,8 +223,8 @@ export default function ResumePage() {
           </div>
           <div className="space-y-3">
             {sortedCareers.map((career) => {
-              const start = new Date(career.startDate);
-              const end = career.current ? new Date() : new Date(career.endDate);
+              const start = new Date(career.start_date);
+              const end = career.current ? new Date() : new Date(career.end_date || career.start_date);
               const careerMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
               const careerYears = Math.floor(careerMonths / 12);
               const careerRemainingMonths = careerMonths % 12;
@@ -198,7 +235,7 @@ export default function ResumePage() {
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="text-sm font-semibold text-gray-900">{career.company}</h3>
                       <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-semibold whitespace-nowrap">
-                        {career.startDate} ~ {career.current ? "현재" : career.endDate}
+                        {career.start_date} ~ {career.current ? "현재" : career.end_date}
                       </span>
                       <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-md font-semibold">
                         {careerYears > 0 ? `${careerYears}년 ${careerRemainingMonths}개월` : `${careerRemainingMonths}개월`}
@@ -211,7 +248,7 @@ export default function ResumePage() {
                       <p className="text-xs text-gray-700 leading-relaxed">{career.description}</p>
                     </div>
                   )}
-                  {career.achievements.length > 0 && (
+                  {career.achievements && career.achievements.length > 0 && (
                     <div className="rounded-md bg-white p-2.5 border border-gray-100">
                       <ul className="space-y-1.5 text-xs text-gray-700">
                         {career.achievements.map((achievement, index) => (
@@ -262,7 +299,7 @@ export default function ResumePage() {
         </div>
       )}
 
-      {selectedSections.education && educations.length > 0 && (
+      {selectedSections.education && educations && educations.length > 0 && (
         <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
           <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">학력</h2>
           <div className="space-y-3">
@@ -271,7 +308,7 @@ export default function ResumePage() {
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="font-semibold text-xs text-gray-900">{education.school}</h3>
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-semibold whitespace-nowrap">
-                    {education.startDate} ~ {education.endDate}
+                    {education.start_date} ~ {education.end_date}
                   </span>
                 </div>
                 <p className="text-xs text-gray-700">{education.major} / {education.degree}</p>
@@ -292,7 +329,7 @@ export default function ResumePage() {
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="text-sm font-semibold text-gray-900">{project.name}</h3>
                     <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-semibold whitespace-nowrap">
-                      {project.startDate} ~ {project.endDate}
+                      {project.start_date} ~ {project.end_date}
                     </span>
                   </div>
                   <p className="text-xs text-gray-700 font-medium">{project.role}</p>
@@ -300,11 +337,11 @@ export default function ResumePage() {
                 <div className="mb-3 pb-2 border-b border-gray-200">
                   <p className="text-xs text-gray-700 leading-relaxed">{project.description}</p>
                 </div>
-                {project.techStack.length > 0 && (
+                {project.tech_stack && project.tech_stack.length > 0 && (
                   <div className="mb-3 pb-2 border-b border-gray-200">
                     <span className="font-semibold text-xs text-gray-900 block mb-2">기술스택</span>
                     <div className="flex flex-wrap gap-1.5">
-                      {project.techStack.map((tech, idx) => (
+                      {project.tech_stack.map((tech, idx) => (
                         <span key={idx} className="bg-gray-800 text-white px-2 py-0.5 rounded-md text-xs font-medium">
                           {tech}
                         </span>
@@ -312,7 +349,7 @@ export default function ResumePage() {
                     </div>
                   </div>
                 )}
-                {project.achievements.length > 0 && (
+                {project.achievements && project.achievements.length > 0 && (
                   <div className="rounded-md bg-white p-2.5 border border-gray-100">
                     <ul className="space-y-1.5 text-xs text-gray-700">
                       {project.achievements.map((achievement, index) => (
@@ -392,7 +429,7 @@ export default function ResumePage() {
               : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
           }`}
         >
-          경력 ({careers.length})
+          경력 ({careers?.length || 0})
         </button>
         <button
           onClick={() => toggleSection("skills")}
@@ -402,7 +439,7 @@ export default function ResumePage() {
               : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
           }`}
         >
-          보유기술 ({skills.length})
+          보유기술 ({skills?.length || 0})
         </button>
         <button
           onClick={() => toggleSection("education")}
@@ -412,7 +449,7 @@ export default function ResumePage() {
               : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
           }`}
         >
-          학력 ({educations.length})
+          학력 ({educations?.length || 0})
         </button>
         <button
           onClick={() => toggleSection("projects")}
@@ -422,7 +459,7 @@ export default function ResumePage() {
               : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
           }`}
         >
-          프로젝트 ({projects.length})
+          프로젝트 ({projects?.length || 0})
         </button>
         </div>
         <div className="flex items-center gap-2 text-sm">
@@ -450,7 +487,7 @@ export default function ResumePage() {
         </div>
       </div>
 
-      {!basicInfo.name && (
+      {!basicInfo?.name && (
         <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
           <p className="text-yellow-800">
             데이터를 입력하지 않았습니다.{" "}

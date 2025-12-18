@@ -59,7 +59,7 @@ export async function proxy(request: NextRequest) {
   const { data: { session } } = await supabase.auth.getSession()
 
   // Protected routes that require authentication
-  const protectedPaths = ['/data', '/admin']
+  const protectedPaths = ['/data', '/admin', '/resume', '/career']
 
   const isProtectedPath = protectedPaths.some(path =>
     request.nextUrl.pathname.startsWith(path)
