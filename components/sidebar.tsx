@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { AuthButton } from "./auth-button";
 
 const mainMenuItems = [
   {
@@ -93,6 +94,9 @@ export function Sidebar() {
             </ul>
           </div>
         </nav>
+        <div className="border-t p-4">
+          <AuthButton />
+        </div>
       </div>
     </aside>
   );
