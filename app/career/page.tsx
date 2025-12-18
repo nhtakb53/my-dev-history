@@ -1,22 +1,67 @@
 "use client";
 
-import { useFileStorage } from "@/hooks/useFileStorage";
-import { BasicInfo, Career, Skill, Education, Project } from "@/types/resume";
+import { getBasicInfo, getCareers, getSkills, getEducations, getProjects } from "@/lib/api";
+import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { useState } from "react";
 import Link from "next/link";
 import { Mail, Phone } from "lucide-react";
 
+interface BasicInfo {
+  id: string;
+  name: string;
+  nameEn?: string;
+  nickname?: string;
+  email?: string;
+  phone?: string;
+  tags?: string[];
+}
+
+interface Career {
+  id: string;
+  company: string;
+  position: string;
+  startDate: string;
+  endDate?: string;
+  current: boolean;
+  description?: string;
+  achievements: string[];
+}
+
+interface Skill {
+  id: string;
+  category: string;
+  name: string;
+  level: 1 | 2 | 3;
+}
+
+interface Education {
+  id: string;
+  school: string;
+  major: string;
+  degree: string;
+  startDate: string;
+  endDate: string;
+  gpa?: string;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  role: string;
+  techStack: string[];
+  achievements: string[];
+  url?: string;
+}
+
 export default function CareerStatementPage() {
-  const [basicInfo, , loadingBasic] = useFileStorage<BasicInfo>("basic-info", {
-    name: "",
-    nameEn: "",
-    email: "",
-    phone: "",
-  });
-  const [careers, , loadingCareers] = useFileStorage<Career[]>("careers", []);
-  const [skills, , loadingSkills] = useFileStorage<Skill[]>("skills", []);
-  const [educations, , loadingEducations] = useFileStorage<Education[]>("educations", []);
-  const [projects, , loadingProjects] = useFileStorage<Project[]>("projects", []);
+  const { data: basicInfo, loading: loadingBasic } = useSupabaseData<BasicInfo>(getBasicInfo, []);
+  const { data: careers, loading: loadingCareers } = useSupabaseData<Career[]>(getCareers, []);
+  const { data: skills, loading: loadingSkills } = useSupabaseData<Skill[]>(getSkills, []);
+  const { data: educations, loading: loadingEducations } = useSupabaseData<Education[]>(getEducations, []);
+  const { data: projects, loading: loadingProjects } = useSupabaseData<Project[]>(getProjects, []);
 
   const [selectedSections, setSelectedSections] = useState({
     basic: true,
@@ -33,31 +78,37 @@ export default function CareerStatementPage() {
     setSelectedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const sortedCareers = [...careers].sort((a, b) => {
-    const dateA = new Date(a.startDate).getTime();
-    const dateB = new Date(b.startDate).getTime();
-    return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
-  });
+  const sortedCareers = careers
+    ? [...careers].sort((a, b) => {
+        const dateA = new Date(a.startDate).getTime();
+        const dateB = new Date(b.startDate).getTime();
+        return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
+      })
+    : [];
 
-  const sortedProjects = [...projects].sort((a, b) => {
-    const dateA = new Date(a.startDate).getTime();
-    const dateB = new Date(b.startDate).getTime();
-    return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
-  });
+  const sortedProjects = projects
+    ? [...projects].sort((a, b) => {
+        const dateA = new Date(a.startDate).getTime();
+        const dateB = new Date(b.startDate).getTime();
+        return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
+      })
+    : [];
 
-  const groupedSkills = skills.reduce((acc, skill) => {
-    if (!acc[skill.category]) {
-      acc[skill.category] = [];
-    }
-    acc[skill.category].push(skill);
-    return acc;
-  }, {} as Record<string, Skill[]>);
+  const groupedSkills = skills
+    ? skills.reduce((acc, skill) => {
+        if (!acc[skill.category]) {
+          acc[skill.category] = [];
+        }
+        acc[skill.category].push(skill);
+        return acc;
+      }, {} as Record<string, Skill[]>)
+    : {};
 
   const loading = loadingBasic || loadingCareers || loadingSkills || loadingEducations || loadingProjects;
 
   const CareerContent = () => (
     <div className="a4-page bg-white">
-      {selectedSections.basic && (
+      {selectedSections.basic && basicInfo && (
         <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm text-center">
           <h1 className="text-lg font-semibold text-gray-900 mb-4 tracking-tight">경력기술서</h1>
           <h2 className="text-base font-semibold text-gray-900 mb-1">{basicInfo.name || "이름 없음"}</h2>
@@ -224,7 +275,7 @@ export default function CareerStatementPage() {
         </div>
       )}
 
-      {selectedSections.education && educations.length > 0 && (
+      {selectedSections.education && educations && educations.length > 0 && (
         <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
           <h2 className="text-base font-bold text-gray-900 mb-2 pb-1.5 border-b border-gray-300">학력</h2>
           <div className="space-y-3">
@@ -310,7 +361,7 @@ export default function CareerStatementPage() {
               : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
           }`}
         >
-          경력 ({careers.length})
+          경력 ({careers?.length || 0})
         </button>
         <button
           onClick={() => toggleSection("projects")}
@@ -320,7 +371,7 @@ export default function CareerStatementPage() {
               : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
           }`}
         >
-          프로젝트 ({projects.length})
+          프로젝트 ({projects?.length || 0})
         </button>
         <button
           onClick={() => toggleSection("skills")}
@@ -330,7 +381,7 @@ export default function CareerStatementPage() {
               : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
           }`}
         >
-          보유기술 ({skills.length})
+          보유기술 ({skills?.length || 0})
         </button>
         <button
           onClick={() => toggleSection("education")}
@@ -340,7 +391,7 @@ export default function CareerStatementPage() {
               : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
           }`}
         >
-          학력 ({educations.length})
+          학력 ({educations?.length || 0})
         </button>
         </div>
         <div className="flex items-center gap-2 text-sm">
@@ -368,7 +419,7 @@ export default function CareerStatementPage() {
         </div>
       </div>
 
-      {!basicInfo.name && (
+      {!basicInfo?.name && (
         <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
           <p className="text-yellow-800">
             데이터를 입력하지 않았습니다.{" "}

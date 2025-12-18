@@ -1,8 +1,18 @@
 "use client";
 
-import { useFileStorage } from "@/hooks/useFileStorage";
-import { Education } from "@/types/resume";
+import { getEducations, createEducation, updateEducation, deleteEducation } from "@/lib/api";
+import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { useState } from "react";
+
+interface Education {
+  id: string;
+  school: string;
+  major: string;
+  degree: string;
+  startDate: string;
+  endDate: string;
+  gpa?: string;
+}
 import {
   DndContext,
   closestCenter,
@@ -86,9 +96,10 @@ function SortableEducationItem({ education, onEdit, onDelete }: { education: Edu
 }
 
 export default function EducationPage() {
-  const [educations, saveEducations, loading] = useFileStorage<Education[]>("educations", []);
+  const { data: educations, loading, refetch } = useSupabaseData<Education[]>(getEducations, []);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<Omit<Education, "id">>({
     school: "",
     major: "",
@@ -108,28 +119,43 @@ export default function EducationPage() {
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (over && active.id !== over.id) {
+    if (over && active.id !== over.id && educations) {
       const oldIndex = educations.findIndex((e) => e.id === active.id);
       const newIndex = educations.findIndex((e) => e.id === over.id);
       const reorderedEducations = arrayMove(educations, oldIndex, newIndex);
-      await saveEducations(reorderedEducations);
+
+      // Update display_order for each education
+      try {
+        for (let i = 0; i < reorderedEducations.length; i++) {
+          await updateEducation(reorderedEducations[i].id, {
+            ...reorderedEducations[i],
+            display_order: i,
+          });
+        }
+        await refetch();
+      } catch (error) {
+        console.error("Failed to reorder educations:", error);
+      }
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    let updatedEducations;
-    if (editingId) {
-      updatedEducations = educations.map((ed) => (ed.id === editingId ? { ...formData, id: editingId } : ed));
-    } else {
-      updatedEducations = [...educations, { ...formData, id: Date.now().toString() }];
-    }
-    const success = await saveEducations(updatedEducations);
-    if (success) {
+    setSaving(true);
+    try {
+      if (editingId) {
+        await updateEducation(editingId, formData);
+      } else {
+        await createEducation(formData);
+      }
+      await refetch();
       resetForm();
       alert("저장되었습니다.");
-    } else {
+    } catch (error) {
+      console.error("Failed to save education:", error);
       alert("저장에 실패했습니다.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -154,8 +180,13 @@ export default function EducationPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("삭제하시겠습니까?")) {
-      const updatedEducations = educations.filter((ed) => ed.id !== id);
-      await saveEducations(updatedEducations);
+      try {
+        await deleteEducation(id);
+        await refetch();
+      } catch (error) {
+        console.error("Failed to delete education:", error);
+        alert("삭제에 실패했습니다.");
+      }
     }
   };
 
@@ -179,6 +210,7 @@ export default function EducationPage() {
 
         {isEditing ? (
           <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
+            {saving && <div className="text-sm text-gray-600">저장 중...</div>}
             <div>
               <label className="block text-sm font-medium mb-2">학교명 *</label>
               <input
@@ -260,7 +292,7 @@ export default function EducationPage() {
         </form>
         ) : (
           <div className="space-y-4">
-            {educations.length === 0 ? (
+            {!educations || educations.length === 0 ? (
               <p className="text-muted-foreground">등록된 학력이 없습니다.</p>
             ) : (
               <DndContext

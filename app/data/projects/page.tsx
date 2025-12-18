@@ -1,8 +1,20 @@
 "use client";
 
-import { useFileStorage } from "@/hooks/useFileStorage";
-import { Project } from "@/types/resume";
+import { getProjects, createProject, updateProject, deleteProject } from "@/lib/api";
+import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { useState } from "react";
+
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  role: string;
+  techStack: string[];
+  achievements: string[];
+  url?: string;
+}
 import {
   DndContext,
   closestCenter,
@@ -111,9 +123,10 @@ function SortableProjectItem({ project, onEdit, onDelete }: { project: Project; 
 }
 
 export default function ProjectsPage() {
-  const [projects, saveProjects, loading] = useFileStorage<Project[]>("projects", []);
+  const { data: projects, loading, refetch } = useSupabaseData<Project[]>(getProjects, []);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<Omit<Project, "id">>({
     name: "",
     description: "",
@@ -137,28 +150,43 @@ export default function ProjectsPage() {
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (over && active.id !== over.id) {
+    if (over && active.id !== over.id && projects) {
       const oldIndex = projects.findIndex((p) => p.id === active.id);
       const newIndex = projects.findIndex((p) => p.id === over.id);
       const reorderedProjects = arrayMove(projects, oldIndex, newIndex);
-      await saveProjects(reorderedProjects);
+
+      // Update display_order for each project
+      try {
+        for (let i = 0; i < reorderedProjects.length; i++) {
+          await updateProject(reorderedProjects[i].id, {
+            ...reorderedProjects[i],
+            display_order: i,
+          });
+        }
+        await refetch();
+      } catch (error) {
+        console.error("Failed to reorder projects:", error);
+      }
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    let updatedProjects;
-    if (editingId) {
-      updatedProjects = projects.map((p) => (p.id === editingId ? { ...formData, id: editingId } : p));
-    } else {
-      updatedProjects = [...projects, { ...formData, id: Date.now().toString() }];
-    }
-    const success = await saveProjects(updatedProjects);
-    if (success) {
+    setSaving(true);
+    try {
+      if (editingId) {
+        await updateProject(editingId, formData);
+      } else {
+        await createProject(formData);
+      }
+      await refetch();
       resetForm();
       alert("저장되었습니다.");
-    } else {
+    } catch (error) {
+      console.error("Failed to save project:", error);
       alert("저장에 실패했습니다.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -187,8 +215,13 @@ export default function ProjectsPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("삭제하시겠습니까?")) {
-      const updatedProjects = projects.filter((p) => p.id !== id);
-      await saveProjects(updatedProjects);
+      try {
+        await deleteProject(id);
+        await refetch();
+      } catch (error) {
+        console.error("Failed to delete project:", error);
+        alert("삭제에 실패했습니다.");
+      }
     }
   };
 
@@ -246,6 +279,7 @@ export default function ProjectsPage() {
 
         {isEditing ? (
           <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
+            {saving && <div className="text-sm text-gray-600">저장 중...</div>}
             <div>
               <label className="block text-sm font-medium mb-2">프로젝트명 *</label>
               <input
@@ -398,7 +432,7 @@ export default function ProjectsPage() {
         </form>
         ) : (
           <div className="space-y-4">
-            {projects.length === 0 ? (
+            {!projects || projects.length === 0 ? (
               <p className="text-muted-foreground">등록된 프로젝트가 없습니다.</p>
             ) : (
               <DndContext

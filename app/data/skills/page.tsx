@@ -1,13 +1,21 @@
 "use client";
 
-import { useFileStorage } from "@/hooks/useFileStorage";
-import { Skill } from "@/types/resume";
+import { getSkills, createSkill, updateSkill, deleteSkill } from "@/lib/api";
+import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { useState } from "react";
 
+interface Skill {
+  id: string;
+  category: string;
+  name: string;
+  level: 1 | 2 | 3;
+}
+
 export default function SkillsPage() {
-  const [skills, saveSkills, loading] = useFileStorage<Skill[]>("skills", []);
+  const { data: skills, loading, refetch } = useSupabaseData<Skill[]>(getSkills, []);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<Omit<Skill, "id">>({
     category: "",
     name: "",
@@ -16,18 +24,21 @@ export default function SkillsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    let updatedSkills;
-    if (editingId) {
-      updatedSkills = skills.map((s) => (s.id === editingId ? { ...formData, id: editingId } : s));
-    } else {
-      updatedSkills = [...skills, { ...formData, id: Date.now().toString() }];
-    }
-    const success = await saveSkills(updatedSkills);
-    if (success) {
+    setSaving(true);
+    try {
+      if (editingId) {
+        await updateSkill(editingId, formData);
+      } else {
+        await createSkill(formData);
+      }
+      await refetch();
       resetForm();
       alert("저장되었습니다.");
-    } else {
+    } catch (error) {
+      console.error("Failed to save skill:", error);
       alert("저장에 실패했습니다.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -45,18 +56,25 @@ export default function SkillsPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("삭제하시겠습니까?")) {
-      const updatedSkills = skills.filter((s) => s.id !== id);
-      await saveSkills(updatedSkills);
+      try {
+        await deleteSkill(id);
+        await refetch();
+      } catch (error) {
+        console.error("Failed to delete skill:", error);
+        alert("삭제에 실패했습니다.");
+      }
     }
   };
 
-  const groupedSkills = skills.reduce((acc, skill) => {
-    if (!acc[skill.category]) {
-      acc[skill.category] = [];
-    }
-    acc[skill.category].push(skill);
-    return acc;
-  }, {} as Record<string, Skill[]>);
+  const groupedSkills = skills
+    ? skills.reduce((acc, skill) => {
+        if (!acc[skill.category]) {
+          acc[skill.category] = [];
+        }
+        acc[skill.category].push(skill);
+        return acc;
+      }, {} as Record<string, Skill[]>)
+    : {};
 
   if (loading) {
     return <div className="p-8">로딩 중...</div>;
@@ -78,6 +96,7 @@ export default function SkillsPage() {
 
         {isEditing ? (
           <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
+            {saving && <div className="text-sm text-gray-600">저장 중...</div>}
             <div>
               <label className="block text-sm font-medium mb-2">카테고리 *</label>
               <input
