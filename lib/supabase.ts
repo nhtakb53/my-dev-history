@@ -1,6 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
+// Re-export client for backward compatibility
+export { createClient } from './supabase/client'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Create a singleton instance
+import { createClient as createBrowserClient } from './supabase/client'
+export const supabase = createBrowserClient()
