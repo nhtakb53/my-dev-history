@@ -34,6 +34,7 @@ export function AuthButton() {
     try {
       await signOut()
       setUser(null)
+      window.location.href = '/login'
     } catch (error) {
       console.error('Error signing out:', error)
     }

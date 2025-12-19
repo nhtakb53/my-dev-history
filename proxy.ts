@@ -59,7 +59,7 @@ export async function proxy(request: NextRequest) {
   const { data: { session } } = await supabase.auth.getSession()
 
   // Protected routes that require authentication
-  const protectedPaths = ['/data', '/admin', '/resume', '/career']
+  const protectedPaths = ['/data', '/admin', '/resume', '/career', '/dashboard', '/profile']
 
   const isProtectedPath = protectedPaths.some(path =>
     request.nextUrl.pathname.startsWith(path)
@@ -72,10 +72,10 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Redirect to home if accessing login page while authenticated
+  // Redirect to dashboard if accessing login page while authenticated
   if (request.nextUrl.pathname === '/login' && session) {
     const redirect = request.nextUrl.searchParams.get('redirect')
-    return NextResponse.redirect(new URL(redirect || '/', request.url))
+    return NextResponse.redirect(new URL(redirect || '/dashboard', request.url))
   }
 
   return response

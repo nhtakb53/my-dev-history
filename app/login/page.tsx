@@ -13,7 +13,7 @@ export default function LoginPage() {
     // Check if already logged in
     getSession().then((session) => {
       if (session) {
-        router.push('/')
+        router.push('/dashboard')
       } else {
         setLoading(false)
       }

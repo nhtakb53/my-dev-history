@@ -21,15 +21,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-  const isLandingPage = pathname === "/";
+  const hideSidebar = pathname === "/" || pathname === "/login";
 
   return (
     <html lang="ko">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {!isLandingPage && <Sidebar />}
-        <main className={`${!isLandingPage ? "ml-64" : ""} min-h-screen print:ml-0`}>
+        {!hideSidebar && <Sidebar />}
+        <main className={`${!hideSidebar ? "ml-64" : ""} min-h-screen print:ml-0`}>
           {children}
         </main>
       </body>

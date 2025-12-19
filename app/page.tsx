@@ -1,5 +1,10 @@
+"use client";
+
 import Link from 'next/link';
 import { ArrowRight, FileText, Briefcase, Sparkles, Mail, Phone, Github } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getSession } from '@/lib/auth';
 
 // 예시 데이터
 const sampleData = {
@@ -45,6 +50,28 @@ const sampleData = {
 };
 
 export default function Home() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // 로그인 상태 확인
+    getSession().then((session) => {
+      if (session) {
+        router.push('/dashboard');
+      } else {
+        setLoading(false);
+      }
+    });
+  }, [router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
