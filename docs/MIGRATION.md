@@ -54,12 +54,13 @@ npm run dev
 
 ```javascript
 // 방법 1: 콘솔에서 직접 확인
-const { data } = await fetch('/api/auth/user').then(r => r.json())
+const {data} = await fetch('/api/auth/user').then(r => r.json())
 console.log('User ID:', data.user.id)
 
 // 방법 2: Supabase 클라이언트 사용
-import { supabase } from './lib/supabase'
-const { data: { user } } = await supabase.auth.getUser()
+import {supabase} from './supabase'
+
+const {data: {user}} = await supabase.auth.getUser()
 console.log('User ID:', user.id)
 ```
 
