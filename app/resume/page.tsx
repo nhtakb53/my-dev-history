@@ -372,16 +372,16 @@ export default function ResumePage() {
   if (isPreview) {
     return (
       <div className="min-h-screen bg-gray-100 print:bg-white">
-        <div className="fixed top-4 right-4 z-10 print:hidden">
+        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b p-4 flex justify-end gap-2 print:hidden">
           <button
             onClick={() => setIsPreview(false)}
-            className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 shadow-lg mr-2"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 shadow text-sm"
           >
             편집 모드로 돌아가기
           </button>
           <button
             onClick={() => window.print()}
-            className="px-6 py-3 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90 shadow-lg"
+            className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90 shadow text-sm"
           >
             PDF 저장
           </button>
