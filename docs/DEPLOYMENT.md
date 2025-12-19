@@ -22,7 +22,7 @@ vercel --prod
 1. [Vercel Dashboard](https://vercel.com/dashboard) 접속
 2. "Add New Project" 클릭
 3. "Import Git Repository" 선택
-4. GitHub 연동 후 `my-dev-history` 저장소 선택
+4. GitHub 연동 후 `mad-story` 저장소 선택
 
 ### 2.2 환경 변수 설정
 Vercel Dashboard → Project Settings → Environment Variables에서 설정:

@@ -61,7 +61,7 @@ npm start
 ## 프로젝트 구조
 
 ```
-my-dev-history/
+mad-story/
 ├── app/
 │   ├── data/              # 데이터 입력 페이지
 │   │   ├── basic/         # 기본사항
