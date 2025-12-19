@@ -7,11 +7,8 @@ import { TopHeader } from "@/components/top-header";
 export default function ProfilePage() {
   return (
     <>
-      <TopHeader
-        title="내 정보"
-        description="이력서 및 경력기술서에 사용될 정보를 관리하세요"
-      />
-      <div className="pt-[73px] pl-64 print:pt-0 print:pl-0">
+      <TopHeader title="내 정보" />
+      <div className="pt-[65px] pl-64 print:pt-0 print:pl-0">
         <div className="p-6 max-w-7xl">
         {/* 정보 관리 카드 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

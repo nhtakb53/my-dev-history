@@ -98,7 +98,7 @@ export default function BasicInfoPage() {
     return (
       <>
         <TopHeader title="기본사항" />
-        <div className="pt-[73px] pl-64 print:pt-0 print:pl-0">
+        <div className="pt-[65px] pl-64 print:pt-0 print:pl-0">
           <div className="p-8 flex items-center justify-center min-h-[400px]">
             <div className="text-muted-foreground">로딩 중...</div>
           </div>
@@ -110,7 +110,7 @@ export default function BasicInfoPage() {
   return (
     <>
       <TopHeader title="기본사항" />
-      <div className="pt-[73px] pl-64 print:pt-0 print:pl-0">
+      <div className="pt-[65px] pl-64 print:pt-0 print:pl-0">
         <div className="p-8 flex justify-center">
           <div className="w-full max-w-2xl">
             <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">

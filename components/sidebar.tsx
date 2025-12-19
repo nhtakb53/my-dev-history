@@ -70,7 +70,7 @@ export function Sidebar() {
 
   return (
     <aside className={cn(
-      "flex-shrink-0 border-r bg-background print:hidden transition-[width] duration-300 fixed left-0 top-[73px] bottom-0 z-10",
+      "flex-shrink-0 border-r bg-background print:hidden transition-[width] duration-300 fixed left-0 top-[65px] bottom-0 z-10",
       isCollapsed ? "w-16" : "w-64"
     )}>
         <div className="flex h-full flex-col">

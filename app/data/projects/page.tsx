@@ -272,7 +272,7 @@ export default function ProjectsPage() {
     return (
       <>
         <TopHeader title="프로젝트" />
-        <div className="pt-[73px] pl-64 print:pt-0 print:pl-0">
+        <div className="pt-[65px] pl-64 print:pt-0 print:pl-0">
           <div className="p-8 flex items-center justify-center min-h-[400px]">
             <div className="text-muted-foreground">로딩 중...</div>
           </div>
@@ -294,7 +294,7 @@ export default function ProjectsPage() {
           </button>
         }
       />
-      <div className="pt-[73px] pl-64 print:pt-0 print:pl-0">
+      <div className="pt-[65px] pl-64 print:pt-0 print:pl-0">
         <div className="p-8 flex justify-center">
           <div className="w-full max-w-2xl">
 

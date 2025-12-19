@@ -52,11 +52,8 @@ export default function DashboardPage() {
 
   return (
     <>
-      <TopHeader
-        title="대시보드"
-        description={`안녕하세요, ${basicInfo?.name || "개발자"}님! 👋`}
-      />
-      <div className="pt-[73px] pl-64 print:pt-0 print:pl-0">
+      <TopHeader title="대시보드" />
+      <div className="pt-[65px] pl-64 print:pt-0 print:pl-0">
         <div className="p-6 max-w-7xl">
         {/* 통계 카드 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
