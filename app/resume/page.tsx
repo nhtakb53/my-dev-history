@@ -224,7 +224,7 @@ export default function ResumePage() {
         <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
           <div className="flex items-center gap-2 mb-3 pb-2 border-b">
             <h2 className="text-base font-semibold text-gray-900">경력</h2>
-            <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white">
+            <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
               총 {years > 0 ? `${years}년 ${months}개월` : `${months}개월`}
             </span>
           </div>
@@ -259,13 +259,13 @@ export default function ResumePage() {
                         )}
                       </div>
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50">
+                        <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50 font-semibold">
                           {career.position}
                         </span>
-                        <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white">
+                        <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
                           {career.start_date} ~ {career.current ? "현재" : career.end_date}
                         </span>
-                        <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white">{careerYears > 0 ? `${careerYears}년 ${careerRemainingMonths}개월` : `${careerRemainingMonths}개월`}</span>
+                        <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">{careerYears > 0 ? `${careerYears}년 ${careerRemainingMonths}개월` : `${careerRemainingMonths}개월`}</span>
                       </div>
                     </div>
                   </div>
@@ -318,14 +318,14 @@ export default function ResumePage() {
                   <div className="flex-1">
                     <h3 className="text-sm font-semibold text-gray-900 mb-1.5">{education.school}</h3>
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50">
-                        {education.major} / {education.degree}
+                      <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50 font-semibold">
+                        {education.major} | {education.degree}
                       </span>
-                      <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white">
+                      <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
                         {education.start_date} ~ {education.end_date}
                       </span>
                       {education.gpa && (
-                        <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50">
+                        <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50 font-semibold">
                           학점: {education.gpa}
                         </span>
                       )}
@@ -390,10 +390,10 @@ export default function ResumePage() {
                   <div className="flex-1">
                     <h3 className="text-sm font-semibold text-gray-900 mb-1.5">{project.name}</h3>
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50">
+                      <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50 font-semibold">
                         {project.role}
                       </span>
-                      <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white">
+                      <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
                         {project.start_date} ~ {project.end_date}
                       </span>
                     </div>
