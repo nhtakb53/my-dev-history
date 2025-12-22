@@ -256,3 +256,136 @@ export async function deleteSkill(id: string) {
 
   if (error) throw error
 }
+
+// Tech Stack Categories
+const TECH_CATEGORIES: Record<string, string[]> = {
+  '프론트엔드': [
+    'React', 'Vue', 'Angular', 'Svelte', 'Next.js', 'Nuxt.js', 'Gatsby',
+    'HTML', 'CSS', 'JavaScript', 'TypeScript', 'Tailwind', 'Bootstrap',
+    'jQuery', 'Redux', 'Recoil', 'MobX', 'Zustand', 'Sass', 'SCSS',
+    'Webpack', 'Vite', 'Babel', 'ESLint', 'Prettier'
+  ],
+  '백엔드': [
+    'Node.js', 'Express', 'NestJS', 'Fastify', 'Koa',
+    'Python', 'Django', 'Flask', 'FastAPI',
+    'Java', 'Spring', 'Spring Boot',
+    'Go', 'Gin', 'Echo',
+    'Ruby', 'Rails',
+    'PHP', 'Laravel',
+    'C#', '.NET', 'ASP.NET',
+    'Rust', 'Actix'
+  ],
+  '데이터베이스': [
+    'MySQL', 'PostgreSQL', 'MariaDB', 'Oracle', 'MS SQL',
+    'MongoDB', 'Redis', 'Elasticsearch', 'DynamoDB',
+    'Supabase', 'Firebase', 'Firestore',
+    'Cassandra', 'CouchDB', 'SQLite'
+  ],
+  '클라우드/인프라': [
+    'AWS', 'Azure', 'GCP', 'Heroku', 'Vercel', 'Netlify',
+    'Docker', 'Kubernetes', 'K8s',
+    'Jenkins', 'GitHub Actions', 'GitLab CI',
+    'Terraform', 'Ansible', 'CloudFormation',
+    'Nginx', 'Apache'
+  ],
+  '모바일': [
+    'React Native', 'Flutter', 'Swift', 'Kotlin',
+    'iOS', 'Android', 'Expo', 'Ionic', 'Xamarin'
+  ],
+  '데이터/AI': [
+    'TensorFlow', 'PyTorch', 'Keras', 'Scikit-learn',
+    'Pandas', 'NumPy', 'Jupyter',
+    'Spark', 'Hadoop', 'Kafka', 'Airflow'
+  ],
+  '기타': []
+}
+
+function getCategoryForTech(tech: string): string {
+  const techLower = tech.toLowerCase().trim()
+
+  // 정확히 일치하는 경우 먼저 체크
+  for (const [category, techs] of Object.entries(TECH_CATEGORIES)) {
+    if (techs.some(t => t.toLowerCase() === techLower)) {
+      return category
+    }
+  }
+
+  // 부분 일치 체크 (긴 것부터 먼저 매칭)
+  for (const [category, techs] of Object.entries(TECH_CATEGORIES)) {
+    const sortedTechs = [...techs].sort((a, b) => b.length - a.length)
+    for (const t of sortedTechs) {
+      const tLower = t.toLowerCase()
+      // 정확한 단어 매칭 (공백이나 특수문자로 구분된 단어)
+      const regex = new RegExp(`\\b${tLower}\\b`, 'i')
+      if (regex.test(techLower)) {
+        return category
+      }
+    }
+  }
+
+  return '기타'
+}
+
+// Tech Stack Statistics (Flat structure)
+export async function getTechStackStats(userId?: string) {
+  const projects = await getProjects(userId)
+
+  const techCount: Record<string, { value: number; category: string }> = {}
+
+  projects?.forEach((project: any) => {
+    if (project.tech_stack && Array.isArray(project.tech_stack)) {
+      project.tech_stack.forEach((tech: string) => {
+        if (!techCount[tech]) {
+          techCount[tech] = {
+            value: 0,
+            category: getCategoryForTech(tech)
+          }
+        }
+        techCount[tech].value += 1
+      })
+    }
+  })
+
+  return Object.entries(techCount).map(([name, data]) => ({
+    name,
+    value: data.value,
+    category: data.category
+  })).sort((a, b) => b.value - a.value)
+}
+
+// Tech Stack Statistics (Hierarchical structure for grouped treemap)
+export async function getTechStackStatsGrouped(userId?: string) {
+  const projects = await getProjects(userId)
+
+  const categoryData: Record<string, { name: string; children: { name: string; value: number }[] }> = {}
+
+  projects?.forEach((project: any) => {
+    if (project.tech_stack && Array.isArray(project.tech_stack)) {
+      project.tech_stack.forEach((tech: string) => {
+        const category = getCategoryForTech(tech)
+
+        if (!categoryData[category]) {
+          categoryData[category] = {
+            name: category,
+            children: []
+          }
+        }
+
+        const existingTech = categoryData[category].children.find(t => t.name === tech)
+        if (existingTech) {
+          existingTech.value += 1
+        } else {
+          categoryData[category].children.push({
+            name: tech,
+            value: 1
+          })
+        }
+      })
+    }
+  })
+
+  return Object.values(categoryData).map(cat => ({
+    ...cat,
+    children: cat.children.sort((a, b) => b.value - a.value)
+  }))
+}

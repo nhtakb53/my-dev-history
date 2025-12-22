@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { FileText, Briefcase, User, Calendar, TrendingUp, Award } from "lucide-react";
-import { getBasicInfo, getCareers, getSkills, getProjects, getEducations } from "@/lib/api";
+import { getBasicInfo, getCareers, getSkills, getProjects, getEducations, getTechStackStatsGrouped } from "@/lib/api";
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { TopHeader } from "@/components/top-header";
+import { TechStackTreemap } from "@/components/tech-stack-treemap";
 
 interface BasicInfo {
   name: string;
@@ -31,12 +32,23 @@ interface Education {
   id: string;
 }
 
+interface TechItem {
+  name: string;
+  value: number;
+}
+
+interface CategoryGroup {
+  name: string;
+  children: TechItem[];
+}
+
 export default function DashboardPage() {
   const { data: basicInfo } = useSupabaseData<BasicInfo>(getBasicInfo, []);
   const { data: careers } = useSupabaseData<Career[]>(getCareers, []);
   const { data: skills } = useSupabaseData<Skill[]>(getSkills, []);
   const { data: projects } = useSupabaseData<Project[]>(getProjects, []);
   const { data: educations } = useSupabaseData<Education[]>(getEducations, []);
+  const { data: techStats } = useSupabaseData<CategoryGroup[]>(getTechStackStatsGrouped, []);
 
   const currentCareer = careers?.find(c => c.current);
 
@@ -151,6 +163,14 @@ export default function DashboardPage() {
                 </Link>
               </div>
             </div>
+
+            {/* 기술 스택 통계 */}
+            {techStats && techStats.length > 0 && (
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 shadow border border-gray-200 dark:border-gray-800 mb-6">
+                <h2 className="text-lg font-bold mb-3">프로젝트 기술 스택 통계</h2>
+                <TechStackTreemap data={techStats} height={400} showLegend={true} />
+              </div>
+            )}
 
             {/* 데이터 현황 */}
             <div className="bg-white dark:bg-gray-900 rounded-lg p-4 shadow border border-gray-200 dark:border-gray-800">

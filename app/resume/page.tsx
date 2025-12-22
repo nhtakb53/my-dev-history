@@ -3,9 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Mail, Phone, Github } from "lucide-react";
-import { getBasicInfo, getCareers, getSkills, getEducations, getProjects } from "@/lib/api";
+import { getBasicInfo, getCareers, getSkills, getEducations, getProjects, getTechStackStatsGrouped } from "@/lib/api";
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { TopHeader } from "@/components/top-header";
+import { TechStackTreemap } from "@/components/tech-stack-treemap";
 
 interface BasicInfo {
   name: string;
@@ -67,6 +68,16 @@ interface Project {
   logo_fit?: "contain" | "cover";
 }
 
+interface TechItem {
+  name: string;
+  value: number;
+}
+
+interface CategoryGroup {
+  name: string;
+  children: TechItem[];
+}
+
 const getLevelText = (level: number) => {
   const levels = {
     1: "기본적인 사용 경험과 협업에 필요한 지식 보유",
@@ -93,6 +104,7 @@ export default function ResumePage() {
   const { data: skills, loading: loadingSkills } = useSupabaseData<Skill[]>(getSkills, []);
   const { data: educations, loading: loadingEducations } = useSupabaseData<Education[]>(getEducations, []);
   const { data: projects, loading: loadingProjects } = useSupabaseData<Project[]>(getProjects, []);
+  const { data: techStats } = useSupabaseData<CategoryGroup[]>(getTechStackStatsGrouped, []);
 
   const [selectedSections, setSelectedSections] = useState({
     basic: true,
@@ -338,35 +350,10 @@ export default function ResumePage() {
         </div>
       )}
 
-      {selectedSections.skills && Object.keys(groupedSkills).length > 0 && (
+      {selectedSections.skills && techStats && techStats.length > 0 && (
           <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm print:break-inside-avoid">
             <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">보유 기술</h2>
-            <div className="bg-gray-50 p-2.5 rounded-md mb-3 border border-gray-200">
-              <div className="space-y-1 text-xs text-gray-700">
-                <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-2 text-xs">3</span>{getLevelText(3)}</p>
-                <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-2 text-xs">2</span>{getLevelText(2)}</p>
-                <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-2 text-xs">1</span>{getLevelText(1)}</p>
-              </div>
-            </div>
-            <div className="space-y-2.5">
-              {Object.entries(groupedSkills).map(([category, categorySkills]) => (
-                  <div key={category} className="flex gap-3">
-                    <div className="w-20 font-semibold text-xs text-gray-900">{category}</div>
-                    <div className="flex-1">
-                      <div className="flex flex-wrap gap-2">
-                        {categorySkills.map((skill) => (
-                            <div key={skill.id} className="flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded-md border border-gray-200">
-                        <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white text-xs font-bold">
-                          {skill.level}
-                        </span>
-                              <span className="text-xs text-gray-900">{skill.name}</span>
-                            </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-              ))}
-            </div>
+            <TechStackTreemap data={techStats} height={300} showLegend={true} />
           </div>
       )}
 
