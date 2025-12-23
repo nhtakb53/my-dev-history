@@ -43,7 +43,7 @@ https://your-domain.com
 2. GitHub OAuth App 생성 (아직 안했다면):
    - https://github.com/settings/developers 접속
    - "New OAuth App" 클릭
-   - **Application name**: My Dev History (또는 원하는 이름)
+   - **Application name**: Mad Story (또는 원하는 이름)
    - **Homepage URL**: `http://localhost:3000`
    - **Authorization callback URL**: `https://ijzfhtuqbvpvlrczxdts.supabase.co/auth/v1/callback`
 
