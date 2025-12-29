@@ -5,11 +5,13 @@ import { Treemap, ResponsiveContainer } from "recharts";
 interface TechItem {
   name: string;
   value: number;
+  [key: string]: any;
 }
 
 interface CategoryGroup {
   name: string;
   children: TechItem[];
+  [key: string]: any;
 }
 
 interface TechStackTreemapProps {
