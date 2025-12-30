@@ -70,7 +70,6 @@ export default function CareerStatementPage() {
   const { data: projects, loading: loadingProjects } = useSupabaseData<Project[]>(getProjects, []);
 
   const [selectedSections, setSelectedSections] = useState({
-    basic: true,
     career: false,
     skills: true,
     education: false,
@@ -114,66 +113,7 @@ export default function CareerStatementPage() {
 
   const CareerContent = () => (
     <div className="a4-page bg-white">
-      {selectedSections.basic && basicInfo && (
-        <Card className="mb-4 print:break-inside-avoid">
-          <CardContent className="p-4">
-            <div className="flex flex-row-reverse items-start gap-4">
-              {basicInfo.profile_image && (
-                <img
-                  src={basicInfo.profile_image}
-                  alt={basicInfo.name}
-                  className="w-65 h-75 object-cover rounded-lg"
-                />
-              )}
-              <div className="flex-1">
-                <h1 className="text-3xl font-semibold text-gray-900 mb-0.5 tracking-tight mb-2">
-                  {basicInfo.name || "이름 없음"}
-                </h1>
-                {(basicInfo.nameEn || basicInfo.nickname) && (
-                  <p className="text-md text-gray-600 mb-3">
-                    {[basicInfo.nameEn, basicInfo.nickname].filter(Boolean).join(" / ")}
-                  </p>
-                )}
-                <div className="flex flex-col gap-1 text-xs text-gray-600">
-                  {basicInfo.email && (
-                    <div className="flex items-center gap-2">
-                      <Mail size={18} className="shrink-0" />
-                      <a href={`mailto:${basicInfo.email}`} className="hover:text-gray-900 transition-colors">
-                        {basicInfo.email}
-                      </a>
-                    </div>
-                  )}
-                  {basicInfo.phone && (
-                    <div className="flex items-center gap-2">
-                      <Phone size={18} className="shrink-0" />
-                      <span>{basicInfo.phone}</span>
-                    </div>
-                  )}
-                </div>
-                {basicInfo.tags && basicInfo.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {basicInfo.tags.map((tag) => (
-                      <Badge
-                        key={tag}
-                        className="bg-gradient-to-r from-blue-500 to-purple-500 text-white"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-            {basicInfo.introduce && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {basicInfo.introduce}
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+      <h1 className="text-2xl font-bold text-gray-900 mb-4 pb-2 border-b-2 border-gray-300">경력기술서</h1>
 
       {selectedSections.career && sortedCareers.length > 0 && (
         <Card className="mb-4">
@@ -395,13 +335,6 @@ export default function CareerStatementPage() {
         actions={
           <>
             <div className="flex items-center gap-2 text-sm border-r pr-4">
-              <Button
-                onClick={() => toggleSection("basic")}
-                variant={selectedSections.basic ? "default" : "outline"}
-                size="sm"
-              >
-                기본사항
-              </Button>
               <Button
                 onClick={() => toggleSection("projects")}
                 variant={selectedSections.projects ? "default" : "outline"}
